@@ -1,9 +1,11 @@
 import express from "express";
 import { body, query } from "express-validator";
 import { getBalance, getTransactions, postTransactions } from "./controllers";
-import { validateRequest } from "./core/middlewares";
+import authMiddleware, { validateRequest } from "./core/middlewares";
 
 const router = express.Router();
+
+router.use(authMiddleware("external"));
 
 router.get(
   "/transactions",

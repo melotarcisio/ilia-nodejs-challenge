@@ -9,7 +9,6 @@ dotenv.config();
 const app: Express = express();
 const port = env.PORT;
 
-app.use(authMiddleware);
 app.use(express.json());
 app.use(router);
 
