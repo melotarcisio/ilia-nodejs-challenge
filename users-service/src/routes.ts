@@ -1,9 +1,29 @@
 import express from "express";
 import { body, param, query } from "express-validator";
 import authMiddleware, { validateRequest } from "./core/middlewares";
-import { authenticateUser, getUsers, postUser } from "./controllers";
+import {
+  authenticateUser,
+  deleteUser,
+  getUser,
+  getUsers,
+  internalValidadeUser,
+  patchUser,
+  postUser,
+} from "./controllers";
+
+const internalRouter = express.Router();
+
+internalRouter.get(
+  "/internal/user/:id",
+  authMiddleware("internal"),
+  [param("id").notEmpty().withMessage("Id is required")],
+  validateRequest,
+  internalValidadeUser
+);
 
 const router = express.Router();
+
+router.use(internalRouter);
 
 router.post(
   "/auth",
@@ -51,21 +71,21 @@ router.patch(
       .withMessage("Password must be valid"),
   ],
   validateRequest,
-  postUser
+  patchUser
 );
 
 router.get(
   "/users/:id",
   [param("id").notEmpty().withMessage("Id is required")],
   validateRequest,
-  postUser
+  getUser
 );
 
 router.delete(
   "/users/:id",
   [param("id").notEmpty().withMessage("Id is required")],
   validateRequest,
-  postUser
+  deleteUser
 );
 
 export default router;

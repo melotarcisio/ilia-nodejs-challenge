@@ -2,18 +2,24 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { env } from "./env";
 
+type KeyType = "internal" | "external";
+
 const privateKeys = {
   internal: env.INTERNAL_PRIVATE_KEY,
   external: env.EXTERNAL_PRIVATE_KEY,
 };
 
-function generateJWT(key: keyof typeof privateKeys): string {
+type Payload = {
+  id: string;
+};
+
+function generateJWT(key: KeyType, payload: Payload): string {
   const privateKey = privateKeys[key];
   if (!privateKey) {
     throw new Error("Private key not found");
   }
 
-  const token = jwt.sign({}, privateKey, { expiresIn: "30d" });
+  const token = jwt.sign(payload, privateKey, { expiresIn: "30d" });
   return token;
 }
 
@@ -22,12 +28,11 @@ function authenticateJWT(token: string, privateKey: string) {
     const decoded = jwt.verify(token, privateKey);
     return decoded;
   } catch (err) {
-    console.error(err);
     return null;
   }
 }
 
-function isValidJWT(token: string, key: keyof typeof privateKeys) {
+function isValidJWT(token: string, key: KeyType) {
   return !!authenticateJWT(token, privateKeys[key]);
 }
 

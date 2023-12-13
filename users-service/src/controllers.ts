@@ -68,7 +68,7 @@ export const authenticateUser = async (req: Request, res: Response) => {
     return res.status(401).json({ message: "Invalid credentials" });
   }
 
-  const token = generateJWT("internal");
+  const token = generateJWT("external", { id: user.id });
 
   res.json({
     access_token: token,
@@ -79,4 +79,15 @@ export const authenticateUser = async (req: Request, res: Response) => {
       last_name: user.last_name,
     },
   });
+};
+
+export const internalValidadeUser: RequestHandler = async (req, res) => {
+  const { id } = req.params;
+
+  const user = await prisma.user.findUnique({ where: { id } });
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  res.json(user);
 };
