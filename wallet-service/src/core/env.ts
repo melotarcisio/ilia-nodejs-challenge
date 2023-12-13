@@ -4,6 +4,7 @@ class EnvironmentVariables {
 
   public INTERNAL_PRIVATE_KEY = process.env.INTERNAL_PRIVATE_KEY || "";
   public EXTERNAL_PRIVATE_KEY = process.env.EXTERNAL_PRIVATE_KEY || "";
+  public USERS_SERVICE_URL = process.env.USERS_SERVICE_URL || "";
 }
 
 export const env = new EnvironmentVariables();

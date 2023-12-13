@@ -31,6 +31,8 @@ paths:
           description: Response
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+        '400':
+          $ref: '#/components/responses/UserNotFoundError'
       security: 
         - bearerAuth: []
     get:
@@ -120,4 +122,6 @@ components:
       bearerFormat: JWT
   responses:
     UnauthorizedError:
-      description: Access token is missing or invalid    
+      description: Access token is missing or invalid
+    UserNotFoundError:
+      description: User not found

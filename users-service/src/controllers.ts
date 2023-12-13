@@ -84,10 +84,13 @@ export const authenticateUser = async (req: Request, res: Response) => {
 export const internalValidadeUser: RequestHandler = async (req, res) => {
   const { id } = req.params;
 
-  const user = await prisma.user.findUnique({ where: { id } });
-  if (!user) {
+  const { password, ...user } = (await prisma.user.findUnique({
+    where: { id },
+  })) || { id: null };
+
+  if (!user?.id) {
     return res.status(404).json({ message: "User not found" });
   }
 
-  res.json(user);
+  res.send(user);
 };

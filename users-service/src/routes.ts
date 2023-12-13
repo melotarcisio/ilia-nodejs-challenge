@@ -1,5 +1,5 @@
 import express from "express";
-import { body, param, query } from "express-validator";
+import { body, param } from "express-validator";
 import authMiddleware, { validateRequest } from "./core/middlewares";
 import {
   authenticateUser,
@@ -11,11 +11,13 @@ import {
   postUser,
 } from "./controllers";
 
+const internalAuthMiddleware = authMiddleware("internal");
+
 const internalRouter = express.Router();
 
 internalRouter.get(
-  "/internal/user/:id",
-  authMiddleware("internal"),
+  "/internal/users/:id",
+  internalAuthMiddleware,
   [param("id").notEmpty().withMessage("Id is required")],
   validateRequest,
   internalValidadeUser
@@ -35,10 +37,11 @@ router.post(
   authenticateUser
 );
 
-router.use(authMiddleware("external"));
+const userAuthenticationMiddleware = authMiddleware("external");
 
 router.post(
   "/users",
+  userAuthenticationMiddleware,
   [
     body("first_name").notEmpty().withMessage("First name is required"),
     body("last_name").notEmpty().withMessage("Last name is required"),
@@ -49,10 +52,11 @@ router.post(
   postUser
 );
 
-router.get("/users", getUsers);
+router.get("/users", userAuthenticationMiddleware, getUsers);
 
 router.patch(
   "/users/:id",
+  userAuthenticationMiddleware,
   [
     param("id").notEmpty().withMessage("Id is required"),
     body("first_name")
@@ -76,6 +80,7 @@ router.patch(
 
 router.get(
   "/users/:id",
+  userAuthenticationMiddleware,
   [param("id").notEmpty().withMessage("Id is required")],
   validateRequest,
   getUser
@@ -83,6 +88,7 @@ router.get(
 
 router.delete(
   "/users/:id",
+  userAuthenticationMiddleware,
   [param("id").notEmpty().withMessage("Id is required")],
   validateRequest,
   deleteUser

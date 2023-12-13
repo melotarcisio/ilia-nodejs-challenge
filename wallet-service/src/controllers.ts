@@ -1,5 +1,6 @@
 import { PrismaClient, TransactionType, Transactions } from "@prisma/client";
 import { Request, RequestHandler, Response } from "express";
+import { checkUser } from "./services";
 
 const prisma = new PrismaClient();
 
@@ -14,6 +15,11 @@ export const getTransactions = async (req: Request, res: Response) => {
 
 export const postTransactions = async (req: Request, res: Response) => {
   const transaction = req.body as Transactions;
+
+  const user = await checkUser(transaction.user_id);
+
+  if (!user) return res.status(400).json({ error: "User not found" });
+
   const result = await prisma.transactions.create({ data: transaction });
 
   res.json(result);

@@ -12,7 +12,7 @@ const authMiddleware =
     if (isValidToken) {
       next();
     } else {
-      res.status(401).json({ error: "Access token is missing or invalid    " });
+      res.status(401).json({ error: "Access token is missing or invalid" });
     }
   };
 
