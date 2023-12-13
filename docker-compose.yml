@@ -1,0 +1,72 @@
+version: "3"
+services:
+  users-postgres:
+    image: postgres
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${USERS_SERVICE_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${USERS_SERVICE_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${USERS_SERVICE_POSTGRES_DB}
+    expose:
+      - 5443:5432
+    volumes:
+      - ./db-data/users:/var/lib/postgresql/data
+
+  users-service:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file: .env
+    ports:
+      - 3002:${USERS_SERVICE_PORT}
+    depends_on:
+      - users-postgres
+    volumes:
+      - ./users-service:/app
+    working_dir: /app
+
+    command: /bin/bash -c "/app/start.sh"
+
+  wallet-postgres:
+    image: postgres
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${WALLET_SERVICE_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${WALLET_SERVICE_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${WALLET_SERVICE_POSTGRES_DB}
+    ports:
+      - 5442:5432
+    volumes:
+      - ./db-data/wallet:/var/lib/postgresql/data
+
+  wallet-service:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file: .env
+    ports:
+      - 3001:${WALLET_SERVICE_PORT}
+    depends_on:
+      - wallet-postgres
+    volumes:
+      - ./wallet-service:/app
+    working_dir: /app
+    command: /bin/bash -c "/app/start.sh"
+
+  users-swagger:
+    image: swaggerapi/swagger-ui
+    ports:
+      - 8082:8080
+    environment:
+      - SWAGGER_JSON=/app/ms-users.yaml
+    volumes:
+      - ./ms-users.yaml:/app/ms-users.yaml
+
+  wallet-swagger:
+    image: swaggerapi/swagger-ui
+    ports:
+      - 8081:8080
+    environment:
+      - SWAGGER_JSON=/app/ms-transactions.yaml
+    volumes:
+      - ./ms-transactions.yaml:/app/ms-transactions.yaml
