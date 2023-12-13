@@ -52,3 +52,21 @@ services:
       - ./wallet-service:/app
     working_dir: /app
     command: /bin/bash -c "/app/start.sh"
+
+  user-swagger:
+    image: swaggerapi/swagger-ui
+    ports:
+      - 8082:8080
+    environment:
+      - SWAGGER_JSON=/app/ms-users.yaml
+    volumes:
+      - ./ms-users.yaml:/app/ms-users.yaml
+
+  wallet-swagger:
+    image: swaggerapi/swagger-ui
+    ports:
+      - 8081:8080
+    environment:
+      - SWAGGER_JSON=/app/ms-transactions.yaml
+    volumes:
+      - ./ms-transactions.yaml:/app/ms-transactions.yaml

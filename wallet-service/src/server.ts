@@ -1,7 +1,6 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import { env } from "./core/env";
-import authMiddleware from "./core/middlewares";
 import router from "./routes";
 
 dotenv.config();
