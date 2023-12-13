@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 import { env } from "./env";
 
 const privateKeys = {
@@ -30,4 +31,14 @@ function isValidJWT(token: string, key: keyof typeof privateKeys) {
   return !!authenticateJWT(token, privateKeys[key]);
 }
 
-export { generateJWT, isValidJWT };
+const saltRounds = 10;
+
+function generatePasswordHash(password: string): Promise<string> {
+  return bcrypt.hash(password, saltRounds);
+}
+
+function comparePasswordHash(password: string, hash: string): Promise<boolean> {
+  return bcrypt.compare(password, hash);
+}
+
+export { generateJWT, isValidJWT, generatePasswordHash, comparePasswordHash };
