@@ -1,28 +1,28 @@
 version: "3"
 services:
-  user-postgres:
+  users-postgres:
     image: postgres
     env_file: .env
     environment:
-      POSTGRES_USER: ${USER_SERVICE_POSTGRES_USER}
-      POSTGRES_PASSWORD: ${USER_SERVICE_POSTGRES_PASSWORD}
-      POSTGRES_DB: ${USER_SERVICE_POSTGRES_DB}
+      POSTGRES_USER: ${USERS_SERVICE_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${USERS_SERVICE_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${USERS_SERVICE_POSTGRES_DB}
     expose:
-      - 5432
+      - 5443:5432
     volumes:
-      - ./db-data/user:/var/lib/postgresql/data
+      - ./db-data/users:/var/lib/postgresql/data
 
-  user-service:
+  users-service:
     build:
       context: .
       dockerfile: ./Dockerfile
     env_file: .env
     ports:
-      - 3002:${USER_SERVICE_PORT}
+      - 3002:${USERS_SERVICE_PORT}
     depends_on:
-      - user-postgres
+      - users-postgres
     volumes:
-      - ./user-service:/app
+      - ./users-service:/app
     working_dir: /app
 
     command: /bin/bash -c "/app/start.sh"
@@ -35,7 +35,7 @@ services:
       POSTGRES_PASSWORD: ${WALLET_SERVICE_POSTGRES_PASSWORD}
       POSTGRES_DB: ${WALLET_SERVICE_POSTGRES_DB}
     ports:
-      - 5432:5432
+      - 5442:5432
     volumes:
       - ./db-data/wallet:/var/lib/postgresql/data
 
@@ -53,7 +53,7 @@ services:
     working_dir: /app
     command: /bin/bash -c "/app/start.sh"
 
-  user-swagger:
+  users-swagger:
     image: swaggerapi/swagger-ui
     ports:
       - 8082:8080
