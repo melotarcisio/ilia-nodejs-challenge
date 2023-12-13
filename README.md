@@ -1,4 +1,6 @@
 # ília - Code Challenge NodeJS
+I developed it using linux and had problems when I tried to run it on windows due to the differences that exist in the execution of shell scripts.
+Due to the short time I had to develop, I couldn't solve this, so I ask you to test it on linux machines.
 
 ## This repository is a microservice monorepo that consists of two services:
 - Users Service: Responsible for storing user information;
